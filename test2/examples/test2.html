@@ -1,0 +1,646 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Displaying the canvas</title>
+
+<body>
+    <script src="../pixi/pixi.min.js"></script>
+    <script>
+        //Create a Pixi Application
+        let app = new PIXI.Application({
+            width: 256,
+            height: 256,
+            antialiasing: true,
+            transparent: false,
+            resolution: 1
+        });
+
+
+        document.body.appendChild(app.view);
+
+
+        app.renderer.view.style.position = "absolute";
+        app.renderer.view.style.display = "block";
+        app.renderer.autoResize = true;
+        app.renderer.resize(600, 700);
+        app.renderer.backgroundColor = 0x999999;
+
+        PIXI.loader
+            .add("images/form.png")
+            .add("images/run.png")
+            .add("images/driving.png")
+            .add("images/shoping.png")
+            .add("images/work.png")
+            .add("images/play.png")
+            .add("images/sleep.png")
+            .add("images/school.png")
+            .add("images/call.png")
+            .add("images/home.png")
+            .add("images/end.png")
+
+            .load(setup);
+
+        let task, first, second, state, gameOverScene, message, all, cont;
+
+        //This `setup` function will run when the image has loaded
+        function setup() {
+
+            //Create the cat sprite
+            let form = new PIXI.Sprite(PIXI.loader.resources["images/form.png"].texture);
+            let run = new PIXI.Sprite(PIXI.loader.resources["images/run.png"].texture);
+            //run.position.set(10, 0);
+            run.interactive = true;
+            run.buttonMode = true;
+            let drive = new PIXI.Sprite(PIXI.loader.resources["images/driving.png"].texture);
+            //drive.position.set(120, 0);
+            drive.interactive = true;
+            drive.buttonMode = true;
+
+            all = new PIXI.Sprite(PIXI.loader.resources["images/end.png"].texture);
+
+            let shoping = new PIXI.Sprite(PIXI.loader.resources["images/shoping.png"].texture);
+            shoping.interactive = true;
+            shoping.buttonMode = true;
+
+            let work = new PIXI.Sprite(PIXI.loader.resources["images/work.png"].texture);
+            //drive.position.set(120, 0);
+            work.interactive = true;
+            work.buttonMode = true;
+
+            let play = new PIXI.Sprite(PIXI.loader.resources["images/play.png"].texture);
+            play.interactive = true;
+            play.buttonMode = true;
+            let sleep = new PIXI.Sprite(PIXI.loader.resources["images/sleep.png"].texture);
+            //run.position.set(10, 0);
+            sleep.interactive = true;
+            sleep.buttonMode = true;
+            let shool = new PIXI.Sprite(PIXI.loader.resources["images/school.png"].texture);
+            //drive.position.set(120, 0);
+            shool.interactive = true;
+            shool.buttonMode = true;
+
+            let call = new PIXI.Sprite(PIXI.loader.resources["images/call.png"].texture);
+            call.interactive = true;
+            call.buttonMode = true;
+            let home = new PIXI.Sprite(PIXI.loader.resources["images/home.png"].texture);
+            //run.position.set(10, 0);
+            home.interactive = true;
+            home.buttonMode = true;
+
+
+
+            //Add the cat to the stage
+            app.stage.addChild(form);
+
+            app.stage.addChild(all);
+
+            all.visible = false;
+
+
+
+            let rectangleGo = new PIXI.Graphics();
+            rectangleGo.beginFill(0x999999);
+            rectangleGo.drawRect(0, 150, 150, 400);
+            rectangleGo.endFill();
+            app.stage.addChild(rectangleGo);
+
+            let rectangleGoOn = new PIXI.Graphics();
+            rectangleGoOn.beginFill(0x999999);
+            rectangleGoOn.drawRect(0, 150, 150, 400);
+            rectangleGoOn.endFill();
+            app.stage.addChild(rectangleGoOn);
+            rectangleGoOn.x = 300;
+
+            let rectangleGoTo = new PIXI.Graphics();
+            rectangleGoTo.beginFill(0x999911);
+            rectangleGoTo.drawRect(0, 150, 150, 400);
+            rectangleGoTo.endFill();
+            app.stage.addChild(rectangleGoTo);
+            rectangleGoTo.x = 150;
+
+            let rectangleGoFor = new PIXI.Graphics();
+            rectangleGoFor.beginFill(0x999911);
+            rectangleGoFor.drawRect(0, 150, 150, 400);
+            rectangleGoFor.endFill();
+            app.stage.addChild(rectangleGoFor);
+            rectangleGoFor.x = 450;
+
+            cont = new PIXI.Container();
+            cont.addChild(rectangleGo);
+            cont.addChild(rectangleGoTo);
+            cont.addChild(rectangleGoFor);
+            cont.addChild(rectangleGoOn);
+            app.stage.addChild(cont);
+
+            first = new PIXI.Container();
+            first.addChild(home);
+            first.addChild(sleep);
+            first.addChild(run);
+            first.addChild(shool);
+
+            secend = new PIXI.Container();
+            secend.addChild(play);
+            secend.addChild(shoping);
+            secend.addChild(work);
+            secend.addChild(drive);
+
+
+
+            task = new PIXI.Container();
+            task.addChild(first);
+            task.addChild(secend);
+            app.stage.addChild(task);
+            task.position.set(0, 575);
+            task.children[1].visible = false;
+
+
+
+            for (let j = 0; j < 4; j++) {
+                first.children[j].position.set(80 + j * 110, 00);
+            }
+            for (let j = 0; j < 4; j++) {
+                let y =first.children[j].y;
+                let x = first.children[j].x;
+                let i = randomInt(0, 3);
+                console.log(i);
+                first.children[j].x = first.children[i].x;
+                first.children[j].y = first.children[i].y;
+                first.children[i].x = x;
+                first.children[i].y = y;
+            }
+
+
+
+            const ondragstart = event => {
+                first.children[0].data = event.data;
+                first.children[0].dragging = true;
+
+            };
+            let x1 = first.children[0].x;
+            let y1 = first.children[0].y;
+
+            const ondragend = event => {
+                delete first.children[0].data;
+                first.children[0].dragging = false;
+                if (hitTestRectangle(first.children[0], rectangleGo)) {
+                    first.children[0].x = 25;
+                    first.children[0].y = 0 - 400;
+
+                } else {
+                    first.children[0].x = x1;
+                    first.children[0].y = y1;
+                }
+            };
+
+            const ondragMove = event => {
+                if (first.children[0].dragging === true) {
+                    const newPosition = first.children[0].data.global;
+                    first.children[0].x = newPosition.x - 50;
+                    first.children[0].y = newPosition.y - 620;
+
+                }
+
+            };
+
+            first.children[0].on('pointerdown', ondragstart);
+            first.children[0].on('pointerup', ondragend);
+            first.children[0].on('pointerupoutside', ondragend);
+            first.children[0].on('pointermove', ondragMove);
+
+            const ondragstart1 = event => {
+                first.children[1].data = event.data;
+                first.children[1].dragging = true;
+
+            };
+            let x11 = first.children[1].x;
+            let y11 = first.children[1].y;
+
+            const ondragend1 = event => {
+                delete first.children[1].data;
+                first.children[1].dragging = false;
+                if (hitTestRectangle(first.children[1], rectangleGoTo)) {
+                    if (hitTestRectangle(first.children[3], rectangleGoTo)) {
+                        first.children[1].x = 175;
+                        first.children[1].y = 0 - 290;
+                    } else {
+                        first.children[1].x = 175;
+                        first.children[1].y = 0 - 400;
+                    }
+
+                } else {
+                    first.children[1].x = x11;
+                    first.children[1].y = y11;
+                }
+
+            };
+
+            const ondragMove1 = event => {
+                if (first.children[1].dragging === true) {
+                    const newPosition = first.children[1].data.global;
+                    first.children[1].x = newPosition.x - 50;
+                    first.children[1].y = newPosition.y - 620;
+                }
+
+            };
+
+            first.children[1].on('pointerdown', ondragstart1);
+            first.children[1].on('pointerup', ondragend1);
+            first.children[1].on('pointerupoutside', ondragend1);
+            first.children[1].on('pointermove', ondragMove1);
+
+
+
+
+            const ondragstart2 = event => {
+                first.children[2].data = event.data;
+                first.children[2].dragging = true;
+
+            };
+            let x2 = first.children[2].x;
+            let y2 = first.children[2].y;
+
+            const ondragend2 = event => {
+                delete first.children[2].data;
+                first.children[2].dragging = false;
+                if (hitTestRectangle(first.children[2], rectangleGoFor)) {
+                    first.children[2].x = 475;
+                    first.children[2].y = 0 - 400;
+
+                } else {
+                    first.children[2].x = x2;
+                    first.children[2].y = y2;
+                }
+            };
+
+            const ondragMove2 = event => {
+                if (first.children[2].dragging === true) {
+                    const newPosition = first.children[2].data.global;
+                    first.children[2].x = newPosition.x - 50;
+                    first.children[2].y = newPosition.y - 620;
+
+                }
+
+            };
+
+            first.children[2].on('pointerdown', ondragstart2);
+            first.children[2].on('pointerup', ondragend2);
+            first.children[2].on('pointerupoutside', ondragend2);
+            first.children[2].on('pointermove', ondragMove2);
+
+
+            const ondragstart3 = event => {
+                first.children[3].data = event.data;
+                first.children[3].dragging = true;
+
+            };
+            let x3 = first.children[3].x;
+            let y3 = first.children[3].y;
+
+            const ondragend3 = event => {
+                delete first.children[3].data;
+                first.children[3].dragging = false;
+                if (hitTestRectangle(first.children[3], rectangleGoTo)) {
+                    if (hitTestRectangle(first.children[1], rectangleGoTo)) {
+                        first.children[3].x = 175;
+                        first.children[3].y = 0 - 290;
+                    } else {
+                        first.children[3].x = 175;
+                        first.children[3].y = 0 - 400;
+                    }
+
+                } else {
+                    first.children[3].x = x3;
+                    first.children[3].y = y3;
+                }
+            };
+
+            const ondragMove3 = event => {
+                if (first.children[3].dragging === true) {
+                    const newPosition = first.children[3].data.global;
+                    first.children[3].x = newPosition.x - 50;
+                    first.children[3].y = newPosition.y - 620;
+
+                }
+
+            };
+
+            first.children[3].on('pointerdown', ondragstart3);
+            first.children[3].on('pointerup', ondragend3);
+            first.children[3].on('pointerupoutside', ondragend3);
+            first.children[3].on('pointermove', ondragMove3);
+
+
+            for (let j = 0; j < 4; j++) {
+                secend.children[j].position.set(80 + j * 110, 00);
+            }
+            for (let j = 0; j < 4; j++) {
+                let y = secend.children[j].y;
+                let x = secend.children[j].x;
+                let i = randomInt(0, 3);
+                console.log(i);
+                secend.children[j].x = secend.children[i].x;
+                secend.children[j].y = secend.children[i].y;
+                secend.children[i].x = x;
+                secend.children[i].y = y;
+            }
+
+            const ondragstart00 = event => {
+                secend.children[0].data = event.data;
+                secend.children[0].dragging = true;
+
+            };
+            let x00 = secend.children[0].x;
+            let y00 = secend.children[0].y;
+
+            const ondragend00 = event => {
+                delete secend.children[0].data;
+                secend.children[0].dragging = false;
+                if (hitTestRectangle(secend.children[0], rectangleGoOn)) {
+                    if (hitTestRectangle(secend.children[2], rectangleGoOn)) {
+                        secend.children[0].x = 325;
+                        secend.children[0].y = 0 - 290;
+                    } else {
+                        secend.children[0].x = 325;
+                        secend.children[0].y = 0 - 400;
+                    }
+
+                } else {
+                    secend.children[0].x = x00;
+                    secend.children[0].y = y00;
+                }
+            };
+
+            const ondragMove00 = event => {
+                if (secend.children[0].dragging === true) {
+                    const newPosition = secend.children[0].data.global;
+                    secend.children[0].x = newPosition.x - 50;
+                    secend.children[0].y = newPosition.y - 620;
+
+                }
+
+            };
+
+            secend.children[0].on('pointerdown', ondragstart00);
+            secend.children[0].on('pointerup', ondragend00);
+            secend.children[0].on('pointerupoutside', ondragend00);
+            secend.children[0].on('pointermove', ondragMove00);
+
+            const ondragstart11 = event => {
+                secend.children[1].data = event.data;
+                secend.children[1].dragging = true;
+
+            };
+            let x111 = secend.children[1].x;
+            let y111 = secend.children[1].y;
+
+            const ondragend11 = event => {
+                delete secend.children[0].data;
+                secend.children[1].dragging = false;
+                if (hitTestRectangle(secend.children[1], rectangleGo)) {
+
+                    secend.children[1].x = 25;
+                    secend.children[1].y = 0 - 290;
+
+
+                } else {
+                    secend.children[1].x = x111;
+                    secend.children[1].y = y111;
+                }
+
+            };
+
+            const ondragMove11 = event => {
+                if (secend.children[1].dragging === true) {
+                    const newPosition = secend.children[1].data.global;
+                    secend.children[1].x = newPosition.x - 50;
+                    secend.children[1].y = newPosition.y - 620;
+                }
+
+            };
+
+            secend.children[1].on('pointerdown', ondragstart11);
+            secend.children[1].on('pointerup', ondragend11);
+            secend.children[1].on('pointerupoutside', ondragend11);
+            secend.children[1].on('pointermove', ondragMove11);
+
+
+
+
+            const ondragstart22 = event => {
+                secend.children[2].data = event.data;
+                secend.children[2].dragging = true;
+
+            };
+            let x22 = secend.children[2].x;
+            let y22 = secend.children[2].y;
+
+            const ondragend22 = event => {
+                delete secend.children[2].data;
+                secend.children[2].dragging = false;
+                if (hitTestRectangle(secend.children[2], rectangleGoOn)) {
+                    if (hitTestRectangle(secend.children[0], rectangleGoOn)) {
+                        secend.children[2].x = 325;
+                        secend.children[2].y = 0 - 290;
+                    } else {
+                        secend.children[2].x = 325;
+                        secend.children[2].y = 0 - 400;
+                    }
+
+                } else {
+                    secend.children[2].x = x22;
+                    secend.children[2].y = y22;
+                }
+            };
+
+            const ondragMove22 = event => {
+                if (secend.children[2].dragging === true) {
+                    const newPosition = secend.children[2].data.global;
+                    secend.children[2].x = newPosition.x - 50;
+                    secend.children[2].y = newPosition.y - 620;
+
+                }
+
+            };
+
+            secend.children[2].on('pointerdown', ondragstart22);
+            secend.children[2].on('pointerup', ondragend22);
+            secend.children[2].on('pointerupoutside', ondragend22);
+            secend.children[2].on('pointermove', ondragMove22);
+
+
+            const ondragstart33 = event => {
+                secend.children[3].data = event.data;
+                secend.children[3].dragging = true;
+
+            };
+            let x33 = secend.children[3].x;
+            let y33 = secend.children[3].y;
+
+            const ondragend33 = event => {
+                delete secend.children[3].data;
+                secend.children[3].dragging = false;
+                if (hitTestRectangle(secend.children[3], rectangleGoFor)) {
+                    secend.children[3].x = 475;
+                    secend.children[3].y = 0 - 290;
+                } else {
+                    secend.children[3].x = x33;
+                    secend.children[3].y = y33;
+                }
+            };
+
+            const ondragMove33 = event => {
+                if (secend.children[3].dragging === true) {
+                    const newPosition = secend.children[3].data.global;
+                    secend.children[3].x = newPosition.x - 50;
+                    secend.children[3].y = newPosition.y - 620;
+
+                }
+
+            };
+
+            secend.children[3].on('pointerdown', ondragstart33);
+            secend.children[3].on('pointerup', ondragend33);
+            secend.children[3].on('pointerupoutside', ondragend33);
+            secend.children[3].on('pointermove', ondragMove33);
+
+
+
+            //Set the game state
+            state = play;
+
+            //Start the game loop 
+            app.ticker.add(delta => gameLoop(delta));
+        }
+
+
+        function gameLoop(delta) {
+
+
+            if (first.children[0].x == 25 && first.children[1].x == 175 && first.children[2].x == 475 && first.children[3].x == 175)
+                task.children[1].visible = true;
+            if (secend.children[0].x == 325 && secend.children[1].x == 25 && secend.children[2].x == 325 && secend.children[3].x == 475) {
+                task.children[0].visible = false;
+                task.children[1].visible = false;
+                cont.visible = false;
+                all.visible = true;
+
+            }
+        }
+
+
+
+        function hitTestRectangle(r1, r2) {
+            let pos = r1.y;
+            r1.y += 480;
+
+            //Define the variables we'll need to calculate
+            let hit, combinedHalfWidths, combinedHalfHeights, vx, vy;
+            //hit will determine whether there's a collision
+            hit = false;
+
+            //Find the center points of each sprite
+            r1.centerX = r1.x + r1.width / 2;
+            r1.centerY = r1.y + r1.height / 2;
+            r2.centerX = r2.x + r2.width / 2;
+            r2.centerY = r2.y + r2.height / 2;
+
+            //Find the half-widths and half-heights of each sprite
+            r1.halfWidth = r1.width / 2;
+            r1.halfHeight = r1.height / 2;
+            r2.halfWidth = r2.width / 2;
+            r2.halfHeight = r2.height / 2;
+
+            //Calculate the distance vector between the sprites
+            vx = r1.centerX - r2.centerX;
+            vy = r1.centerY - r2.centerY;
+
+            //Figure out the combined half-widths and half-heights
+            combinedHalfWidths = r1.halfWidth + r2.halfWidth;
+            combinedHalfHeights = r1.halfHeight + r2.halfHeight;
+
+            //Check for a collision on the x axis
+            if (Math.abs(vx) < combinedHalfWidths) {
+
+                //A collision might be occurring. Check for a collision on the y axis
+                if (Math.abs(vy) < combinedHalfHeights) {
+
+                    //There's definitely a collision happening
+                    hit = true;
+                } else {
+
+                    //There's no collision on the y axis
+                    hit = false;
+                }
+            } else {
+
+                //There's no collision on the x axis
+                hit = false;
+            }
+            r1.y = pos;
+            //`hit` will be either `true` or `false`
+            return hit;
+        };
+
+        function hitTestRectangleFigur(r1, r2) {
+
+
+            //Define the variables we'll need to calculate
+            let hit, combinedHalfWidths, combinedHalfHeights, vx, vy;
+            //hit will determine whether there's a collision
+            hit = false;
+
+            //Find the center points of each sprite
+            r1.centerX = r1.x + r1.width / 2;
+            r1.centerY = r1.y + r1.height / 2;
+            r2.centerX = r2.x + r2.width / 2;
+            r2.centerY = r2.y + r2.height / 2;
+
+            //Find the half-widths and half-heights of each sprite
+            r1.halfWidth = r1.width / 2;
+            r1.halfHeight = r1.height / 2;
+            r2.halfWidth = r2.width / 2;
+            r2.halfHeight = r2.height / 2;
+
+            //Calculate the distance vector between the sprites
+            vx = r1.centerX - r2.centerX;
+            vy = r1.centerY - r2.centerY;
+
+            //Figure out the combined half-widths and half-heights
+            combinedHalfWidths = r1.halfWidth + r2.halfWidth;
+            combinedHalfHeights = r1.halfHeight + r2.halfHeight;
+
+            //Check for a collision on the x axis
+            if (Math.abs(vx) < combinedHalfWidths) {
+
+                //A collision might be occurring. Check for a collision on the y axis
+                if (Math.abs(vy) < combinedHalfHeights) {
+
+                    //There's definitely a collision happening
+                    hit = true;
+                } else {
+
+                    //There's no collision on the y axis
+                    hit = false;
+                }
+            } else {
+
+                //There's no collision on the x axis
+                hit = false;
+            }
+
+            //`hit` will be either `true` or `false`
+            return hit;
+        };
+
+
+
+
+
+
+
+
+        function randomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+    </script>
+</body>
